@@ -1,13 +1,13 @@
-// Copyright 2019 The Chromium Authors. All rights reserved.
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef COMPONENTS_CBOR_DIAGNOSTIC_WRITER_H_
-#define COMPONENTS_CBOR_DIAGNOSTIC_WRITER_H_
+#ifndef CBOR_DIAGNOSTIC_WRITER_H_
+#define CBOR_DIAGNOSTIC_WRITER_H_
 
 #include <string>
 
-#include "components/cbor/cbor_export.h"
+#include "cbor/cbor_export.h"
 
 namespace cbor {
 
@@ -26,4 +26,4 @@ class CBOR_EXPORT DiagnosticWriter {
 
 }  // namespace cbor
 
-#endif  // COMPONENTS_CBOR_DIAGNOSTIC_WRITER_H_
+#endif  // CBOR_DIAGNOSTIC_WRITER_H_

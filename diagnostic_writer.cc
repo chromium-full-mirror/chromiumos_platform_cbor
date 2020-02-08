@@ -1,8 +1,8 @@
-// Copyright 2019 The Chromium Authors. All rights reserved.
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "components/cbor/diagnostic_writer.h"
+#include "cbor/diagnostic_writer.h"
 
 #include <string>
 
@@ -10,8 +10,8 @@
 #include "base/logging.h"
 #include "base/numerics/clamped_math.h"
 #include "base/strings/string_number_conversions.h"
-#include "components/cbor/constants.h"
-#include "components/cbor/values.h"
+#include "cbor/constants.h"
+#include "cbor/values.h"
 
 using base::ClampAdd;
 using base::ClampMul;

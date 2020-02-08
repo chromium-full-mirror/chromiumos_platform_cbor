@@ -1,9 +1,9 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2017 The Chromium OS Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef COMPONENTS_CBOR_VALUES_H_
-#define COMPONENTS_CBOR_VALUES_H_
+#ifndef CBOR_VALUES_H_
+#define CBOR_VALUES_H_
 
 #include <stdint.h>
 
@@ -15,7 +15,7 @@
 #include "base/containers/span.h"
 #include "base/macros.h"
 #include "base/strings/string_piece.h"
-#include "components/cbor/cbor_export.h"
+#include "cbor/cbor_export.h"
 
 namespace cbor {
 
@@ -210,4 +210,4 @@ class CBOR_EXPORT Value {
 
 }  // namespace cbor
 
-#endif  // COMPONENTS_CBOR_VALUES_H_
+#endif  // CBOR_VALUES_H_

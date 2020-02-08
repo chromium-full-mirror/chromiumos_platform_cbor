@@ -1,12 +1,12 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2017 The Chromium OS Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 #include <stdint.h>
 #include <algorithm>
 
-#include "components/cbor/reader.h"  // nogncheck
-#include "components/cbor/writer.h"  // nogncheck
+#include "cbor/reader.h"  // nogncheck
+#include "cbor/writer.h"  // nogncheck
 
 namespace cbor {
 
