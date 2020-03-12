@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "base/optional.h"
-#include "cbor/cbor_export.h"
-#include "cbor/values.h"
+#include "chromeos/cbor/cbor_export.h"
+#include "chromeos/cbor/values.h"
 
 // A basic Concise Binary Object Representation (CBOR) encoder as defined by
 // https://tools.ietf.org/html/rfc7049. This is a generic encoder that supplies

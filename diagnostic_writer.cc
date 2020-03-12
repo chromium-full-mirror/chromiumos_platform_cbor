@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "cbor/diagnostic_writer.h"
+#include "chromeos/cbor/diagnostic_writer.h"
 
 #include <string>
 
@@ -10,8 +10,8 @@
 #include "base/logging.h"
 #include "base/numerics/clamped_math.h"
 #include "base/strings/string_number_conversions.h"
-#include "cbor/constants.h"
-#include "cbor/values.h"
+#include "chromeos/cbor/constants.h"
+#include "chromeos/cbor/values.h"
 
 using base::ClampAdd;
 using base::ClampMul;

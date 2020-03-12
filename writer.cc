@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "cbor/writer.h"
+#include "chromeos/cbor/writer.h"
 
 #include <string>
 
 #include "base/numerics/safe_conversions.h"
 #include "base/strings/string_piece.h"
-#include "cbor/constants.h"
+#include "chromeos/cbor/constants.h"
 
 namespace cbor {
 

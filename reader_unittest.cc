@@ -5,7 +5,7 @@
 #include <limits>
 #include <utility>
 
-#include "cbor/reader.h"
+#include "chromeos/cbor/reader.h"
 
 #include "base/containers/span.h"
 #include "base/stl_util.h"
