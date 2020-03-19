@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "chromeos/cbor/values.h"
+#include "cbor/values.h"
 
 #include <new>
 #include <utility>
 
 #include "base/numerics/safe_conversions.h"
 #include "base/strings/string_util.h"
-#include "chromeos/cbor/constants.h"
+#include "cbor/constants.h"
 
 namespace cbor {
 

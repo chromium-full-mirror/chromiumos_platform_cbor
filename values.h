@@ -15,7 +15,7 @@
 #include "base/containers/span.h"
 #include "base/macros.h"
 #include "base/strings/string_piece.h"
-#include "chromeos/cbor/cbor_export.h"
+#include "cbor/cbor_export.h"
 
 namespace cbor {
 

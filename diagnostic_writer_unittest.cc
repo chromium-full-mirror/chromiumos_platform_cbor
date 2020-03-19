@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "chromeos/cbor/diagnostic_writer.h"
+#include "cbor/diagnostic_writer.h"
 
-#include "chromeos/cbor/reader.h"
-#include "chromeos/cbor/values.h"
+#include "cbor/reader.h"
+#include "cbor/values.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
 

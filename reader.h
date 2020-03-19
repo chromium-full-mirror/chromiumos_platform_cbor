@@ -12,8 +12,8 @@
 
 #include "base/containers/span.h"
 #include "base/optional.h"
-#include "chromeos/cbor/cbor_export.h"
-#include "chromeos/cbor/values.h"
+#include "cbor/cbor_export.h"
+#include "cbor/values.h"
 
 // Concise Binary Object Representation (CBOR) decoder as defined by
 // https://tools.ietf.org/html/rfc7049. This decoder only accepts canonical CBOR

@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "chromeos/cbor/cbor_export.h"
+#include "cbor/cbor_export.h"
 
 namespace cbor {
 

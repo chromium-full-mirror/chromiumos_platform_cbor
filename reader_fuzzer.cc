@@ -5,8 +5,8 @@
 #include <stdint.h>
 #include <algorithm>
 
-#include "chromeos/cbor/reader.h"  // nogncheck
-#include "chromeos/cbor/writer.h"  // nogncheck
+#include "cbor/reader.h"  // nogncheck
+#include "cbor/writer.h"  // nogncheck
 
 namespace cbor {
 
