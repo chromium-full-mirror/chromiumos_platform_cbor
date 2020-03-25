@@ -38,6 +38,11 @@ source_set("libcbor_source_set") {
     "//common-mk:pic",
     ":target_defaults",
   ]
+  defines = [
+    # Define COMPONENT_BUILD so that symbols are exported. See cbor_export.h
+    "COMPONENT_BUILD",
+    "CBOR_IMPLEMENTATION",
+  ]
   sources = [
     "diagnostic_writer.cc",
     "reader.cc",
@@ -49,13 +54,11 @@ source_set("libcbor_source_set") {
 static_library("libcbor_static") {
   output_name = "libcbor"
   deps = [ ":libcbor_source_set" ]
-  defines = [ "CBOR_IMPLEMENTATION" ]
 }
 
 shared_library("libcbor_shared") {
   output_name = "libcbor"
   deps = [ ":libcbor_source_set" ]
-  defines = [ "CBOR_IMPLEMENTATION" ]
 }
 
 if (use.test) {
