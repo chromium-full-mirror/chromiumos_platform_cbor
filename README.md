@@ -7,21 +7,24 @@ The source code was fetched from `chromium/src`
 (https://chromium.googlesource.com/chromium/src/+/242df8b64d2a0ab5f057d1d4c76ea8537fdbb789)
 in order to avoid code duplication.
 
+The cros/upstream/master branch is a mirror of the components/cbor directory
+from upstream. It is automatically updated to reflect the latest changes
+in upstream.
+
 ## How to update the source
 
 To pull in updates from `chromium/src`, do the following:
 
-*   `git remote add upstream https://chromium.googlesource.com/chromium/src`
-*   `git fetch upstream master`
-*   `git checkout -b staging-branch upstream/master`
-*   `git subtree split -P components/cbor -b synthetic-branch`
-    *   This could take ~2 hours
+*   `git checkout -b upstream cros/upstream/master`
 *   `git checkout master`
-*   `git merge --allow-unrelated-histories -s subtree synthetic-branch`
-    *   Resolve merge conflicts, if any.
-    *   In the commit message of the merge, describe what changes are added,
-        with original commit hash in chromium/src.
-        E.g. using "git checkout staging-branch && git log --oneline components/cbor"
-*   `git branch -D staging-branch synthetic-branch`
-*   `git remote remove upstream`
-
+*   `git merge --allow-unrelated-histories upstream`
+    *   Expect merge conflicts, because of the difference in header paths.
+    *	OWNERS should use the version from master.
+    *	BUILD.gn should mostly use the version from master, unless the upstream changes
+        the files to be built.
+    *	The #include paths should use the version from master (without "components/"). This
+        should be the majority of the merge conflicts.
+    *	In the commit message of the merge, list the changes from upstream that are merged,
+        with original commit hash from upstream.
+    *	Check the changes introduced by your merge by doing a diff against the commit
+        before the merge. The difference should be the same as the changes in the upstream.
