@@ -15,6 +15,7 @@
 #include "base/containers/span.h"
 #include "base/logging.h"
 #include "base/macros.h"
+#include "base/notreached.h"
 #include "base/strings/string_piece.h"
 #include "cbor/cbor_export.h"
 
