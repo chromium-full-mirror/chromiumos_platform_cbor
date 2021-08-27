@@ -113,7 +113,7 @@ Value::Value(base::StringPiece in_string, Type type) : type_(type) {
   switch (type_) {
     case Type::STRING:
       new (&string_value_) std::string();
-      string_value_ = in_string.as_string();
+      string_value_ = std::string(in_string);
       DCHECK(base::IsStringUTF8(string_value_));
       break;
     case Type::BYTE_STRING:
