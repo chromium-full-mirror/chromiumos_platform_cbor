@@ -8,9 +8,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <vector>
 
-#include "base/optional.h"
 #include "cbor/cbor_export.h"
 #include "cbor/values.h"
 
@@ -80,13 +80,12 @@ class CBOR_EXPORT Writer {
   // Returns the CBOR byte string representation of |node|, unless its nesting
   // depth is greater than |max_nesting_level|, in which case an empty optional
   // value is returned.
-  static base::Optional<std::vector<uint8_t>> Write(
-      const Value& node,
-      size_t max_nesting_level = kDefaultMaxNestingDepth);
+  static std::optional<std::vector<uint8_t>> Write(
+      const Value& node, size_t max_nesting_level = kDefaultMaxNestingDepth);
 
   // A version of |Write| above that takes a Config.
-  static base::Optional<std::vector<uint8_t>> Write(const Value& node,
-                                                    const Config& config);
+  static std::optional<std::vector<uint8_t>> Write(const Value& node,
+                                                   const Config& config);
 
  private:
   explicit Writer(std::vector<uint8_t>* cbor);

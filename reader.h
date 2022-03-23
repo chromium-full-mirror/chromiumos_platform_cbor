@@ -8,9 +8,9 @@
 #include <stddef.h>
 
 #include <map>
+#include <optional>
 
 #include "base/containers/span.h"
-#include "base/optional.h"
 #include "cbor/cbor_export.h"
 #include "cbor/values.h"
 
@@ -141,21 +141,21 @@ class CBOR_EXPORT Reader {
   //
   // Returns an empty Optional if not all the data was consumed, and sets
   // |error_code_out| to EXTRANEOUS_DATA in this case.
-  static base::Optional<Value> Read(base::span<const uint8_t> input_data,
-                                    DecoderError* error_code_out = nullptr,
-                                    int max_nesting_level = kCBORMaxDepth);
+  static std::optional<Value> Read(base::span<const uint8_t> input_data,
+                                   DecoderError* error_code_out = nullptr,
+                                   int max_nesting_level = kCBORMaxDepth);
 
   // A version of |Read|, above, that takes a |Config| structure to allow
   // additional controls.
-  static base::Optional<Value> Read(base::span<const uint8_t> input_data,
-                                    const Config& config);
+  static std::optional<Value> Read(base::span<const uint8_t> input_data,
+                                   const Config& config);
 
   // A version of |Read| that takes some fields of |Config| as parameters to
   // avoid having to construct a |Config| object explicitly.
-  static base::Optional<Value> Read(base::span<const uint8_t> input_data,
-                                    size_t* num_bytes_consumed,
-                                    DecoderError* error_code_out = nullptr,
-                                    int max_nesting_level = kCBORMaxDepth);
+  static std::optional<Value> Read(base::span<const uint8_t> input_data,
+                                   size_t* num_bytes_consumed,
+                                   DecoderError* error_code_out = nullptr,
+                                   int max_nesting_level = kCBORMaxDepth);
 
   // Translates errors to human-readable error messages.
   static const char* ErrorCodeToString(DecoderError error_code);
@@ -178,24 +178,24 @@ class CBOR_EXPORT Reader {
     uint64_t value;
   };
 
-  base::Optional<DataItemHeader> DecodeDataItemHeader();
-  base::Optional<Value> DecodeCompleteDataItem(const Config& config,
-                                               int max_nesting_level);
-  base::Optional<Value> DecodeValueToNegative(uint64_t value);
-  base::Optional<Value> DecodeValueToUnsigned(uint64_t value);
-  base::Optional<Value> DecodeToSimpleValue(const DataItemHeader& header);
-  base::Optional<uint64_t> ReadVariadicLengthInteger(uint8_t additional_info);
-  base::Optional<Value> ReadByteStringContent(const DataItemHeader& header);
-  base::Optional<Value> ReadStringContent(const DataItemHeader& header,
-                                          const Config& config);
-  base::Optional<Value> ReadArrayContent(const DataItemHeader& header,
-                                         const Config& config,
-                                         int max_nesting_level);
-  base::Optional<Value> ReadMapContent(const DataItemHeader& header,
-                                       const Config& config,
-                                       int max_nesting_level);
-  base::Optional<uint8_t> ReadByte();
-  base::Optional<base::span<const uint8_t>> ReadBytes(uint64_t num_bytes);
+  std::optional<DataItemHeader> DecodeDataItemHeader();
+  std::optional<Value> DecodeCompleteDataItem(const Config& config,
+                                              int max_nesting_level);
+  std::optional<Value> DecodeValueToNegative(uint64_t value);
+  std::optional<Value> DecodeValueToUnsigned(uint64_t value);
+  std::optional<Value> DecodeToSimpleValue(const DataItemHeader& header);
+  std::optional<uint64_t> ReadVariadicLengthInteger(uint8_t additional_info);
+  std::optional<Value> ReadByteStringContent(const DataItemHeader& header);
+  std::optional<Value> ReadStringContent(const DataItemHeader& header,
+                                         const Config& config);
+  std::optional<Value> ReadArrayContent(const DataItemHeader& header,
+                                        const Config& config,
+                                        int max_nesting_level);
+  std::optional<Value> ReadMapContent(const DataItemHeader& header,
+                                      const Config& config,
+                                      int max_nesting_level);
+  std::optional<uint8_t> ReadByte();
+  std::optional<base::span<const uint8_t>> ReadBytes(uint64_t num_bytes);
   bool IsKeyInOrder(const Value& new_key,
                     const std::map<Value, Value, Value::Less>& map);
   // Check if `new_key` is a duplicate of a key that already exists in the
