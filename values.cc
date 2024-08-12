@@ -52,7 +52,7 @@ Value::Value(Type type) : type_(type) {
       new (&map_value_) MapValue();
       return;
     case Type::TAG:
-      NOTREACHED() << constants::kUnsupportedMajorType;
+      NOTREACHED_IN_MIGRATION() << constants::kUnsupportedMajorType;
       return;
     case Type::SIMPLE_VALUE:
       simple_value_ = Value::SimpleValue::UNDEFINED;
@@ -60,7 +60,7 @@ Value::Value(Type type) : type_(type) {
     case Type::NONE:
       return;
   }
-  NOTREACHED();
+  NOTREACHED_IN_MIGRATION();
 }
 
 Value::Value(SimpleValue in_simple)
@@ -107,7 +107,7 @@ Value::Value(std::string&& in_string, Type type) noexcept : type_(type) {
       bytestring_value_ = BinaryValue(in_string.begin(), in_string.end());
       break;
     default:
-      NOTREACHED();
+      NOTREACHED_IN_MIGRATION();
   }
 }
 
@@ -123,7 +123,7 @@ Value::Value(std::string_view in_string, Type type) : type_(type) {
       bytestring_value_ = BinaryValue(in_string.begin(), in_string.end());
       break;
     default:
-      NOTREACHED();
+      NOTREACHED_IN_MIGRATION();
   }
 }
 
@@ -175,13 +175,13 @@ Value Value::Clone() const {
     case Type::MAP:
       return Value(map_value_);
     case Type::TAG:
-      NOTREACHED() << constants::kUnsupportedMajorType;
+      NOTREACHED_IN_MIGRATION() << constants::kUnsupportedMajorType;
       return Value();
     case Type::SIMPLE_VALUE:
       return Value(simple_value_);
   }
 
-  NOTREACHED();
+  NOTREACHED_IN_MIGRATION();
   return Value();
 }
 
@@ -267,7 +267,7 @@ void Value::InternalMoveConstructFrom(Value&& that) {
       new (&map_value_) MapValue(std::move(that.map_value_));
       return;
     case Type::TAG:
-      NOTREACHED() << constants::kUnsupportedMajorType;
+      NOTREACHED_IN_MIGRATION() << constants::kUnsupportedMajorType;
       return;
     case Type::SIMPLE_VALUE:
       simple_value_ = that.simple_value_;
@@ -275,7 +275,7 @@ void Value::InternalMoveConstructFrom(Value&& that) {
     case Type::NONE:
       return;
   }
-  NOTREACHED();
+  NOTREACHED_IN_MIGRATION();
 }
 
 void Value::InternalCleanup() {
@@ -294,7 +294,7 @@ void Value::InternalCleanup() {
       map_value_.~MapValue();
       break;
     case Type::TAG:
-      NOTREACHED() << constants::kUnsupportedMajorType;
+      NOTREACHED_IN_MIGRATION() << constants::kUnsupportedMajorType;
       break;
     case Type::NONE:
     case Type::UNSIGNED:
