@@ -1,4 +1,4 @@
-// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Copyright 2019 The ChromiumOS Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,10 +18,8 @@ using base::ClampMul;
 
 namespace cbor {
 
-static bool AppendHex(const std::vector<uint8_t> bytes,
-                      char type_char,
-                      size_t rough_max_output_bytes,
-                      std::string* s) {
+static bool AppendHex(const std::vector<uint8_t> bytes, char type_char,
+                      size_t rough_max_output_bytes, std::string *s) {
   s->push_back(type_char);
   s->push_back('\'');
 
@@ -35,124 +33,123 @@ static bool AppendHex(const std::vector<uint8_t> bytes,
   return true;
 }
 
-static bool Serialize(const Value& node,
-                      size_t rough_max_output_bytes,
-                      std::string* s) {
+static bool Serialize(const Value &node, size_t rough_max_output_bytes,
+                      std::string *s) {
   switch (node.type()) {
-    case Value::Type::UNSIGNED:
-      s->append(base::NumberToString(node.GetUnsigned()));
-      break;
+  case Value::Type::UNSIGNED:
+    s->append(base::NumberToString(node.GetUnsigned()));
+    break;
 
-    case Value::Type::NEGATIVE:
-      s->append(base::NumberToString(node.GetNegative()));
-      break;
+  case Value::Type::NEGATIVE:
+    s->append(base::NumberToString(node.GetNegative()));
+    break;
 
-    case Value::Type::INVALID_UTF8:
-      if (!AppendHex(node.GetInvalidUTF8(), 's', rough_max_output_bytes, s)) {
+  case Value::Type::INVALID_UTF8:
+    if (!AppendHex(node.GetInvalidUTF8(), 's', rough_max_output_bytes, s)) {
+      return false;
+    }
+    break;
+
+  case Value::Type::BYTE_STRING:
+    if (!AppendHex(node.GetBytestring(), 'h', rough_max_output_bytes, s)) {
+      return false;
+    }
+    break;
+
+  case Value::Type::STRING: {
+    std::string quoted_and_escaped;
+    base::EscapeJSONString(node.GetString(), /*put_in_quotes=*/true,
+                           &quoted_and_escaped);
+    if (ClampAdd(s->size(), quoted_and_escaped.size()) >
+        rough_max_output_bytes) {
+      return false;
+    }
+    s->append(quoted_and_escaped);
+    break;
+  }
+
+  case Value::Type::ARRAY: {
+    s->push_back('[');
+
+    const Value::ArrayValue &nodes = node.GetArray();
+    bool first = true;
+    for (const auto &subnode : nodes) {
+      if (!first) {
+        s->append(", ");
+      }
+      if (!Serialize(subnode, rough_max_output_bytes, s) ||
+          s->size() > rough_max_output_bytes) {
         return false;
       }
-      break;
+      first = false;
+    }
 
-    case Value::Type::BYTE_STRING:
-      if (!AppendHex(node.GetBytestring(), 'h', rough_max_output_bytes, s)) {
+    s->push_back(']');
+    break;
+  }
+
+  case Value::Type::MAP: {
+    s->push_back('{');
+
+    const Value::MapValue &nodes = node.GetMap();
+    bool first = true;
+    for (const auto &pair : nodes) {
+      if (!first) {
+        s->append(", ");
+      }
+      if (!Serialize(pair.first, rough_max_output_bytes, s)) {
         return false;
       }
-      break;
-
-    case Value::Type::STRING: {
-      std::string quoted_and_escaped;
-      base::EscapeJSONString(node.GetString(), /*put_in_quotes=*/true,
-                             &quoted_and_escaped);
-      if (ClampAdd(s->size(), quoted_and_escaped.size()) >
-          rough_max_output_bytes) {
+      s->append(": ");
+      if (!Serialize(pair.second, rough_max_output_bytes, s) ||
+          s->size() > rough_max_output_bytes) {
         return false;
       }
-      s->append(quoted_and_escaped);
-      break;
+      first = false;
     }
 
-    case Value::Type::ARRAY: {
-      s->push_back('[');
+    s->push_back('}');
+    break;
+  }
 
-      const Value::ArrayValue& nodes = node.GetArray();
-      bool first = true;
-      for (const auto& subnode : nodes) {
-        if (!first) {
-          s->append(", ");
-        }
-        if (!Serialize(subnode, rough_max_output_bytes, s) ||
-            s->size() > rough_max_output_bytes) {
-          return false;
-        }
-        first = false;
-      }
-
-      s->push_back(']');
+  case Value::Type::SIMPLE_VALUE:
+    switch (node.GetSimpleValue()) {
+    case Value::SimpleValue::FALSE_VALUE:
+      s->append("false");
       break;
-    }
-
-    case Value::Type::MAP: {
-      s->push_back('{');
-
-      const Value::MapValue& nodes = node.GetMap();
-      bool first = true;
-      for (const auto& pair : nodes) {
-        if (!first) {
-          s->append(", ");
-        }
-        if (!Serialize(pair.first, rough_max_output_bytes, s)) {
-          return false;
-        }
-        s->append(": ");
-        if (!Serialize(pair.second, rough_max_output_bytes, s) ||
-            s->size() > rough_max_output_bytes) {
-          return false;
-        }
-        first = false;
-      }
-
-      s->push_back('}');
+    case Value::SimpleValue::TRUE_VALUE:
+      s->append("true");
       break;
-    }
-
-    case Value::Type::SIMPLE_VALUE:
-      switch (node.GetSimpleValue()) {
-        case Value::SimpleValue::FALSE_VALUE:
-          s->append("false");
-          break;
-        case Value::SimpleValue::TRUE_VALUE:
-          s->append("true");
-          break;
-        case Value::SimpleValue::NULL_VALUE:
-          s->append("null");
-          break;
-        case Value::SimpleValue::UNDEFINED:
-          s->append("undefined");
-          break;
-        default:
-          NOTREACHED_IN_MIGRATION();
-          break;
-      }
+    case Value::SimpleValue::NULL_VALUE:
+      s->append("null");
       break;
-
-    case Value::Type::NONE:
-      s->append("none");
+    case Value::SimpleValue::UNDEFINED:
+      s->append("undefined");
       break;
-
-    case Value::Type::TAG:
+    default:
       NOTREACHED_IN_MIGRATION();
       break;
+    }
+    break;
+
+  case Value::Type::NONE:
+    s->append("none");
+    break;
+
+  case Value::Type::TAG:
+    NOTREACHED_IN_MIGRATION();
+    break;
   }
 
   return true;
 }
 
 // static
-std::string DiagnosticWriter::Write(const Value& node,
+std::string DiagnosticWriter::Write(const Value &node,
                                     size_t rough_max_output_bytes) {
   std::string ret;
   Serialize(node, rough_max_output_bytes, &ret);
   return ret;
 }
 
-}  // namespace cbor
+} // namespace cbor

@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium OS Authors. All rights reserved.
+// Copyright 2017 The ChromiumOS Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -63,7 +63,7 @@ const char kOutOfRangeIntegerValue[] =
 const char kMapKeyDuplicate[] = "Duplicate map keys are not allowed.";
 const char kUnknownError[] = "An unknown error occured.";
 
-}  // namespace
+} // namespace
 
 Reader::Config::Config() = default;
 Reader::Config::~Config() = default;
@@ -74,7 +74,7 @@ Reader::~Reader() {}
 
 // static
 std::optional<Value> Reader::Read(base::span<uint8_t const> data,
-                                  DecoderError* error_code_out,
+                                  DecoderError *error_code_out,
                                   int max_nesting_level) {
   Config config;
   config.error_code_out = error_code_out;
@@ -85,8 +85,8 @@ std::optional<Value> Reader::Read(base::span<uint8_t const> data,
 
 // static
 std::optional<Value> Reader::Read(base::span<uint8_t const> data,
-                                  size_t* num_bytes_consumed,
-                                  DecoderError* error_code_out,
+                                  size_t *num_bytes_consumed,
+                                  DecoderError *error_code_out,
                                   int max_nesting_level) {
   DCHECK(num_bytes_consumed);
 
@@ -100,7 +100,7 @@ std::optional<Value> Reader::Read(base::span<uint8_t const> data,
 
 // static
 std::optional<Value> Reader::Read(base::span<uint8_t const> data,
-                                  const Config& config) {
+                                  const Config &config) {
   Reader reader(data);
   std::optional<Value> value =
       reader.DecodeCompleteDataItem(config, config.max_nesting_level);
@@ -124,7 +124,7 @@ std::optional<Value> Reader::Read(base::span<uint8_t const> data,
   return value;
 }
 
-std::optional<Value> Reader::DecodeCompleteDataItem(const Config& config,
+std::optional<Value> Reader::DecodeCompleteDataItem(const Config &config,
                                                     int max_nesting_level) {
   if (max_nesting_level < 0 || max_nesting_level > kCBORMaxDepth) {
     error_code_ = DecoderError::TOO_MUCH_NESTING;
@@ -137,24 +137,24 @@ std::optional<Value> Reader::DecodeCompleteDataItem(const Config& config,
   }
 
   switch (header->type) {
-    case Value::Type::UNSIGNED:
-      return DecodeValueToUnsigned(header->value);
-    case Value::Type::NEGATIVE:
-      return DecodeValueToNegative(header->value);
-    case Value::Type::BYTE_STRING:
-      return ReadByteStringContent(*header);
-    case Value::Type::STRING:
-      return ReadStringContent(*header, config);
-    case Value::Type::ARRAY:
-      return ReadArrayContent(*header, config, max_nesting_level);
-    case Value::Type::MAP:
-      return ReadMapContent(*header, config, max_nesting_level);
-    case Value::Type::SIMPLE_VALUE:
-      return DecodeToSimpleValue(*header);
-    case Value::Type::TAG:  // We explicitly don't support TAG.
-    case Value::Type::NONE:
-    case Value::Type::INVALID_UTF8:
-      break;
+  case Value::Type::UNSIGNED:
+    return DecodeValueToUnsigned(header->value);
+  case Value::Type::NEGATIVE:
+    return DecodeValueToNegative(header->value);
+  case Value::Type::BYTE_STRING:
+    return ReadByteStringContent(*header);
+  case Value::Type::STRING:
+    return ReadStringContent(*header, config);
+  case Value::Type::ARRAY:
+    return ReadArrayContent(*header, config, max_nesting_level);
+  case Value::Type::MAP:
+    return ReadMapContent(*header, config, max_nesting_level);
+  case Value::Type::SIMPLE_VALUE:
+    return DecodeToSimpleValue(*header);
+  case Value::Type::TAG: // We explicitly don't support TAG.
+  case Value::Type::NONE:
+  case Value::Type::INVALID_UTF8:
+    break;
   }
 
   error_code_ = DecoderError::UNSUPPORTED_MAJOR_TYPE;
@@ -176,8 +176,8 @@ std::optional<Reader::DataItemHeader> Reader::DecodeDataItemHeader() {
                : std::nullopt;
 }
 
-std::optional<uint64_t> Reader::ReadVariadicLengthInteger(
-    uint8_t additional_info) {
+std::optional<uint64_t>
+Reader::ReadVariadicLengthInteger(uint8_t additional_info) {
   uint8_t additional_bytes = 0;
   if (additional_info < 24) {
     return std::make_optional(additional_info);
@@ -229,7 +229,7 @@ std::optional<Value> Reader::DecodeValueToUnsigned(uint64_t value) {
   return Value(unsigned_value.ValueOrDie());
 }
 
-std::optional<Value> Reader::DecodeToSimpleValue(const DataItemHeader& header) {
+std::optional<Value> Reader::DecodeToSimpleValue(const DataItemHeader &header) {
   // ReadVariadicLengthInteger provides this bound.
   CHECK_LE(header.additional_info, 27);
   // Floating point numbers are not supported.
@@ -246,19 +246,20 @@ std::optional<Value> Reader::DecodeToSimpleValue(const DataItemHeader& header) {
   Value::SimpleValue possibly_unsupported_simple_value =
       static_cast<Value::SimpleValue>(static_cast<int>(header.value));
   switch (possibly_unsupported_simple_value) {
-    case Value::SimpleValue::FALSE_VALUE:
-    case Value::SimpleValue::TRUE_VALUE:
-    case Value::SimpleValue::NULL_VALUE:
-    case Value::SimpleValue::UNDEFINED:
-      return Value(possibly_unsupported_simple_value);
+  case Value::SimpleValue::FALSE_VALUE:
+  case Value::SimpleValue::TRUE_VALUE:
+  case Value::SimpleValue::NULL_VALUE:
+  case Value::SimpleValue::UNDEFINED:
+    return Value(possibly_unsupported_simple_value);
   }
 
   error_code_ = DecoderError::UNSUPPORTED_SIMPLE_VALUE;
   return std::nullopt;
 }
 
-std::optional<Value> Reader::ReadStringContent(
-    const Reader::DataItemHeader& header, const Config& config) {
+std::optional<Value>
+Reader::ReadStringContent(const Reader::DataItemHeader &header,
+                          const Config &config) {
   uint64_t num_bytes = header.value;
   const std::optional<base::span<const uint8_t>> bytes = ReadBytes(num_bytes);
   if (!bytes) {
@@ -278,8 +279,8 @@ std::optional<Value> Reader::ReadStringContent(
   return std::nullopt;
 }
 
-std::optional<Value> Reader::ReadByteStringContent(
-    const Reader::DataItemHeader& header) {
+std::optional<Value>
+Reader::ReadByteStringContent(const Reader::DataItemHeader &header) {
   uint64_t num_bytes = header.value;
   const std::optional<base::span<const uint8_t>> bytes = ReadBytes(num_bytes);
   if (!bytes) {
@@ -290,10 +291,9 @@ std::optional<Value> Reader::ReadByteStringContent(
   return Value(std::move(cbor_byte_string));
 }
 
-std::optional<Value> Reader::ReadArrayContent(
-    const Reader::DataItemHeader& header,
-    const Config& config,
-    int max_nesting_level) {
+std::optional<Value>
+Reader::ReadArrayContent(const Reader::DataItemHeader &header,
+                         const Config &config, int max_nesting_level) {
   const uint64_t length = header.value;
 
   Value::ArrayValue cbor_array;
@@ -308,10 +308,9 @@ std::optional<Value> Reader::ReadArrayContent(
   return Value(std::move(cbor_array));
 }
 
-std::optional<Value> Reader::ReadMapContent(
-    const Reader::DataItemHeader& header,
-    const Config& config,
-    int max_nesting_level) {
+std::optional<Value>
+Reader::ReadMapContent(const Reader::DataItemHeader &header,
+                       const Config &config, int max_nesting_level) {
   const uint64_t length = header.value;
 
   std::map<Value, Value, Value::Less> cbor_map;
@@ -325,17 +324,17 @@ std::optional<Value> Reader::ReadMapContent(
     }
 
     switch (key.value().type()) {
-      case Value::Type::UNSIGNED:
-      case Value::Type::NEGATIVE:
-      case Value::Type::STRING:
-      case Value::Type::BYTE_STRING:
-        break;
-      case Value::Type::INVALID_UTF8:
-        error_code_ = DecoderError::INVALID_UTF8;
-        return std::nullopt;
-      default:
-        error_code_ = DecoderError::INCORRECT_MAP_KEY_TYPE;
-        return std::nullopt;
+    case Value::Type::UNSIGNED:
+    case Value::Type::NEGATIVE:
+    case Value::Type::STRING:
+    case Value::Type::BYTE_STRING:
+      break;
+    case Value::Type::INVALID_UTF8:
+      error_code_ = DecoderError::INVALID_UTF8;
+      return std::nullopt;
+    default:
+      error_code_ = DecoderError::INCORRECT_MAP_KEY_TYPE;
+      return std::nullopt;
     }
     if (IsDuplicateKey(key.value(), cbor_map))
       return std::nullopt;
@@ -352,7 +351,7 @@ std::optional<Value> Reader::ReadMapContent(
   map.reserve(cbor_map.size());
   // TODO(crbug/1271599): when Chromium switches to C++17, this code can be
   // optimized using std::map::extract().
-  for (auto& it : cbor_map)
+  for (auto &it : cbor_map)
     map.emplace_hint(map.end(), it.first.Clone(), std::move(it.second));
   return Value(std::move(map));
 }
@@ -387,13 +386,13 @@ bool Reader::IsEncodingMinimal(uint8_t additional_bytes, uint64_t uint_data) {
   return true;
 }
 
-bool Reader::IsKeyInOrder(const Value& new_key,
-                          const std::map<Value, Value, Value::Less>& map) {
+bool Reader::IsKeyInOrder(const Value &new_key,
+                          const std::map<Value, Value, Value::Less> &map) {
   if (map.empty()) {
     return true;
   }
 
-  const auto& max_current_key = map.rbegin()->first;
+  const auto &max_current_key = map.rbegin()->first;
   const auto less = map.key_comp();
   if (!less(max_current_key, new_key)) {
     error_code_ = DecoderError::OUT_OF_ORDER_KEY;
@@ -402,8 +401,8 @@ bool Reader::IsKeyInOrder(const Value& new_key,
   return true;
 }
 
-bool Reader::IsDuplicateKey(const Value& new_key,
-                            const std::map<Value, Value, Value::Less>& map) {
+bool Reader::IsDuplicateKey(const Value &new_key,
+                            const std::map<Value, Value, Value::Less> &map) {
   if (map.find(new_key) == map.end()) {
     return false;
   }
@@ -412,42 +411,42 @@ bool Reader::IsDuplicateKey(const Value& new_key,
 }
 
 // static
-const char* Reader::ErrorCodeToString(DecoderError error) {
+const char *Reader::ErrorCodeToString(DecoderError error) {
   switch (error) {
-    case DecoderError::CBOR_NO_ERROR:
-      return kNoError;
-    case DecoderError::UNSUPPORTED_MAJOR_TYPE:
-      return constants::kUnsupportedMajorType;
-    case DecoderError::UNKNOWN_ADDITIONAL_INFO:
-      return kUnknownAdditionalInfo;
-    case DecoderError::INCOMPLETE_CBOR_DATA:
-      return kIncompleteCBORData;
-    case DecoderError::INCORRECT_MAP_KEY_TYPE:
-      return kIncorrectMapKeyType;
-    case DecoderError::TOO_MUCH_NESTING:
-      return kTooMuchNesting;
-    case DecoderError::INVALID_UTF8:
-      return kInvalidUTF8;
-    case DecoderError::EXTRANEOUS_DATA:
-      return kExtraneousData;
-    case DecoderError::OUT_OF_ORDER_KEY:
-      return kMapKeyOutOfOrder;
-    case DecoderError::NON_MINIMAL_CBOR_ENCODING:
-      return kNonMinimalCBOREncoding;
-    case DecoderError::UNSUPPORTED_SIMPLE_VALUE:
-      return kUnsupportedSimpleValue;
-    case DecoderError::UNSUPPORTED_FLOATING_POINT_VALUE:
-      return kUnsupportedFloatingPointValue;
-    case DecoderError::OUT_OF_RANGE_INTEGER_VALUE:
-      return kOutOfRangeIntegerValue;
-    case DecoderError::DUPLICATE_KEY:
-      return kMapKeyDuplicate;
-    case DecoderError::UNKNOWN_ERROR:
-      return kUnknownError;
-    default:
-      NOTREACHED_IN_MIGRATION();
-      return "Unknown error code.";
+  case DecoderError::CBOR_NO_ERROR:
+    return kNoError;
+  case DecoderError::UNSUPPORTED_MAJOR_TYPE:
+    return constants::kUnsupportedMajorType;
+  case DecoderError::UNKNOWN_ADDITIONAL_INFO:
+    return kUnknownAdditionalInfo;
+  case DecoderError::INCOMPLETE_CBOR_DATA:
+    return kIncompleteCBORData;
+  case DecoderError::INCORRECT_MAP_KEY_TYPE:
+    return kIncorrectMapKeyType;
+  case DecoderError::TOO_MUCH_NESTING:
+    return kTooMuchNesting;
+  case DecoderError::INVALID_UTF8:
+    return kInvalidUTF8;
+  case DecoderError::EXTRANEOUS_DATA:
+    return kExtraneousData;
+  case DecoderError::OUT_OF_ORDER_KEY:
+    return kMapKeyOutOfOrder;
+  case DecoderError::NON_MINIMAL_CBOR_ENCODING:
+    return kNonMinimalCBOREncoding;
+  case DecoderError::UNSUPPORTED_SIMPLE_VALUE:
+    return kUnsupportedSimpleValue;
+  case DecoderError::UNSUPPORTED_FLOATING_POINT_VALUE:
+    return kUnsupportedFloatingPointValue;
+  case DecoderError::OUT_OF_RANGE_INTEGER_VALUE:
+    return kOutOfRangeIntegerValue;
+  case DecoderError::DUPLICATE_KEY:
+    return kMapKeyDuplicate;
+  case DecoderError::UNKNOWN_ERROR:
+    return kUnknownError;
+  default:
+    NOTREACHED_IN_MIGRATION();
+    return "Unknown error code.";
   }
 }
 
-}  // namespace cbor
+} // namespace cbor

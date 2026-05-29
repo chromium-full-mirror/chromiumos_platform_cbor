@@ -25,13 +25,13 @@ namespace cbor {
 //  * Floating-point numbers.
 //  * Indefinite-length encodings.
 class CBOR_EXPORT Value {
- public:
+public:
   struct Less {
     // Comparison predicate to order keys in a dictionary as required by the
     // canonical CBOR order defined in
     // https://tools.ietf.org/html/rfc7049#section-3.9
     // TODO(808022): Clarify where this stands.
-    bool operator()(const Value& a, const Value& b) const {
+    bool operator()(const Value &a, const Value &b) const {
       // The current implementation only supports integer, text string, byte
       // string and invalid UTF8 keys.
       DCHECK((a.is_integer() || a.is_string() || a.is_bytestring() ||
@@ -50,37 +50,37 @@ class CBOR_EXPORT Value {
       // *  If two keys have the same length, the one with the lower value
       //    in (byte-wise) lexical order sorts earlier.
       switch (a.type()) {
-        case Type::UNSIGNED:
-          // For unsigned integers, the smaller value has shorter length,
-          // and (byte-wise) lexical representation.
-          return a.GetInteger() < b.GetInteger();
-        case Type::NEGATIVE:
-          // For negative integers, the value closer to zero has shorter length,
-          // and (byte-wise) lexical representation.
-          return a.GetInteger() > b.GetInteger();
-        case Type::STRING: {
-          const auto& a_str = a.GetString();
-          const size_t a_length = a_str.size();
-          const auto& b_str = b.GetString();
-          const size_t b_length = b_str.size();
-          return std::tie(a_length, a_str) < std::tie(b_length, b_str);
-        }
-        case Type::BYTE_STRING: {
-          const auto& a_str = a.GetBytestring();
-          const size_t a_length = a_str.size();
-          const auto& b_str = b.GetBytestring();
-          const size_t b_length = b_str.size();
-          return std::tie(a_length, a_str) < std::tie(b_length, b_str);
-        }
-        case Type::INVALID_UTF8: {
-          const auto& a_str = a.GetInvalidUTF8();
-          const size_t a_length = a_str.size();
-          const auto& b_str = b.GetInvalidUTF8();
-          const size_t b_length = b_str.size();
-          return std::tie(a_length, a_str) < std::tie(b_length, b_str);
-        }
-        default:
-          break;
+      case Type::UNSIGNED:
+        // For unsigned integers, the smaller value has shorter length,
+        // and (byte-wise) lexical representation.
+        return a.GetInteger() < b.GetInteger();
+      case Type::NEGATIVE:
+        // For negative integers, the value closer to zero has shorter length,
+        // and (byte-wise) lexical representation.
+        return a.GetInteger() > b.GetInteger();
+      case Type::STRING: {
+        const auto &a_str = a.GetString();
+        const size_t a_length = a_str.size();
+        const auto &b_str = b.GetString();
+        const size_t b_length = b_str.size();
+        return std::tie(a_length, a_str) < std::tie(b_length, b_str);
+      }
+      case Type::BYTE_STRING: {
+        const auto &a_str = a.GetBytestring();
+        const size_t a_length = a_str.size();
+        const auto &b_str = b.GetBytestring();
+        const size_t b_length = b_str.size();
+        return std::tie(a_length, a_str) < std::tie(b_length, b_str);
+      }
+      case Type::INVALID_UTF8: {
+        const auto &a_str = a.GetInvalidUTF8();
+        const size_t a_length = a_str.size();
+        const auto &b_str = b.GetInvalidUTF8();
+        const size_t b_length = b_str.size();
+        return std::tie(a_length, a_str) < std::tie(b_length, b_str);
+      }
+      default:
+        break;
       }
 
       NOTREACHED_IN_MIGRATION();
@@ -119,8 +119,8 @@ class CBOR_EXPORT Value {
   // tests since encoding may yield invalid CBOR data.
   static Value InvalidUTF8StringValueForTesting(std::string_view in_string);
 
-  Value(Value&& that) noexcept;
-  Value() noexcept;  // A NONE value.
+  Value(Value &&that) noexcept;
+  Value() noexcept; // A NONE value.
 
   explicit Value(Type type);
 
@@ -132,22 +132,22 @@ class CBOR_EXPORT Value {
   explicit Value(uint64_t integer_value) = delete;
 
   explicit Value(base::span<const uint8_t> in_bytes);
-  explicit Value(BinaryValue&& in_bytes) noexcept;
+  explicit Value(BinaryValue &&in_bytes) noexcept;
 
-  explicit Value(const char* in_string, Type type = Type::STRING);
-  explicit Value(std::string&& in_string, Type type = Type::STRING) noexcept;
+  explicit Value(const char *in_string, Type type = Type::STRING);
+  explicit Value(std::string &&in_string, Type type = Type::STRING) noexcept;
   explicit Value(std::string_view in_string, Type type = Type::STRING);
 
-  explicit Value(const ArrayValue& in_array);
-  explicit Value(ArrayValue&& in_array) noexcept;
+  explicit Value(const ArrayValue &in_array);
+  explicit Value(ArrayValue &&in_array) noexcept;
 
-  explicit Value(const MapValue& in_map);
-  explicit Value(MapValue&& in_map) noexcept;
+  explicit Value(const MapValue &in_map);
+  explicit Value(MapValue &&in_map) noexcept;
 
-  Value& operator=(Value&& that) noexcept;
+  Value &operator=(Value &&that) noexcept;
 
-  Value(const Value&) = delete;
-  Value& operator=(const Value&) = delete;
+  Value(const Value &) = delete;
+  Value &operator=(const Value &) = delete;
 
   ~Value();
 
@@ -178,18 +178,18 @@ class CBOR_EXPORT Value {
   // These will all fatally assert if the type doesn't match.
   SimpleValue GetSimpleValue() const;
   bool GetBool() const;
-  const int64_t& GetInteger() const;
-  const int64_t& GetUnsigned() const;
-  const int64_t& GetNegative() const;
-  const BinaryValue& GetBytestring() const;
+  const int64_t &GetInteger() const;
+  const int64_t &GetUnsigned() const;
+  const int64_t &GetNegative() const;
+  const BinaryValue &GetBytestring() const;
   std::string_view GetBytestringAsString() const;
   // Returned string may contain NUL characters.
-  const std::string& GetString() const;
-  const ArrayValue& GetArray() const;
-  const MapValue& GetMap() const;
-  const BinaryValue& GetInvalidUTF8() const;
+  const std::string &GetString() const;
+  const ArrayValue &GetArray() const;
+  const MapValue &GetMap() const;
+  const BinaryValue &GetInvalidUTF8() const;
 
- private:
+private:
   friend class Reader;
   // This constructor allows INVALID_UTF8 values to be created, which only
   // |Reader| and InvalidUTF8StringValueForTesting() may do.
@@ -206,10 +206,10 @@ class CBOR_EXPORT Value {
     MapValue map_value_;
   };
 
-  void InternalMoveConstructFrom(Value&& that);
+  void InternalMoveConstructFrom(Value &&that);
   void InternalCleanup();
 };
 
-}  // namespace cbor
+} // namespace cbor
 
-#endif  // CBOR_VALUES_H_
+#endif // CBOR_VALUES_H_
