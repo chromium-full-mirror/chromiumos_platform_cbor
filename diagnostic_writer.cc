@@ -127,8 +127,7 @@ static bool Serialize(const Value &node, size_t rough_max_output_bytes,
       s->append("undefined");
       break;
     default:
-      NOTREACHED_IN_MIGRATION();
-      break;
+      NOTREACHED();
     }
     break;
 
@@ -137,8 +136,7 @@ static bool Serialize(const Value &node, size_t rough_max_output_bytes,
     break;
 
   case Value::Type::TAG:
-    NOTREACHED_IN_MIGRATION();
-    break;
+    NOTREACHED();
   }
 
   return true;

@@ -444,8 +444,7 @@ const char *Reader::ErrorCodeToString(DecoderError error) {
   case DecoderError::UNKNOWN_ERROR:
     return kUnknownError;
   default:
-    NOTREACHED_IN_MIGRATION();
-    return "Unknown error code.";
+    NOTREACHED();
   }
 }
 

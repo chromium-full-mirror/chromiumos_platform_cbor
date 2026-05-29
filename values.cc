@@ -52,15 +52,14 @@ Value::Value(Type type) : type_(type) {
     new (&map_value_) MapValue();
     return;
   case Type::TAG:
-    NOTREACHED_IN_MIGRATION() << constants::kUnsupportedMajorType;
-    return;
+    NOTREACHED() << constants::kUnsupportedMajorType;
   case Type::SIMPLE_VALUE:
     simple_value_ = Value::SimpleValue::UNDEFINED;
     return;
   case Type::NONE:
     return;
   }
-  NOTREACHED_IN_MIGRATION();
+  NOTREACHED();
 }
 
 Value::Value(SimpleValue in_simple)
@@ -107,7 +106,7 @@ Value::Value(std::string &&in_string, Type type) noexcept : type_(type) {
     bytestring_value_ = BinaryValue(in_string.begin(), in_string.end());
     break;
   default:
-    NOTREACHED_IN_MIGRATION();
+    NOTREACHED();
   }
 }
 
@@ -123,7 +122,7 @@ Value::Value(std::string_view in_string, Type type) : type_(type) {
     bytestring_value_ = BinaryValue(in_string.begin(), in_string.end());
     break;
   default:
-    NOTREACHED_IN_MIGRATION();
+    NOTREACHED();
   }
 }
 
@@ -173,14 +172,10 @@ Value Value::Clone() const {
   case Type::MAP:
     return Value(map_value_);
   case Type::TAG:
-    NOTREACHED_IN_MIGRATION() << constants::kUnsupportedMajorType;
-    return Value();
+    NOTREACHED() << constants::kUnsupportedMajorType;
   case Type::SIMPLE_VALUE:
     return Value(simple_value_);
   }
-
-  NOTREACHED_IN_MIGRATION();
-  return Value();
 }
 
 Value::SimpleValue Value::GetSimpleValue() const {
@@ -265,15 +260,13 @@ void Value::InternalMoveConstructFrom(Value &&that) {
     new (&map_value_) MapValue(std::move(that.map_value_));
     return;
   case Type::TAG:
-    NOTREACHED_IN_MIGRATION() << constants::kUnsupportedMajorType;
-    return;
+    NOTREACHED() << constants::kUnsupportedMajorType;
   case Type::SIMPLE_VALUE:
     simple_value_ = that.simple_value_;
     return;
   case Type::NONE:
     return;
   }
-  NOTREACHED_IN_MIGRATION();
 }
 
 void Value::InternalCleanup() {
@@ -292,8 +285,7 @@ void Value::InternalCleanup() {
     map_value_.~MapValue();
     break;
   case Type::TAG:
-    NOTREACHED_IN_MIGRATION() << constants::kUnsupportedMajorType;
-    break;
+    NOTREACHED() << constants::kUnsupportedMajorType;
   case Type::NONE:
   case Type::UNSIGNED:
   case Type::NEGATIVE:
